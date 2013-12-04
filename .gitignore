@@ -1,3 +1,4 @@
 .env
 cex.cnf
 cex.db
+*.pyc
