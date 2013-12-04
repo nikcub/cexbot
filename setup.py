@@ -16,7 +16,7 @@ if sys.argv[-1] == 'publish':
   os.system('python setup.py sdist upload')
   sys.exit()
 
-scripts = ['cexbot']
+scripts = ['bin/cexbot']
 packages = [
   'requests',
 ]
