@@ -25,23 +25,24 @@ A bot for the cex.io cryptocurrency mining marketplace
 ## Dev Install
 
  `git clone --depth=0 https://github.com/nikcub/cexbot.git`
+
  `pip install -r requirements.txt`
 
 ## Config
 
 cexbot needs to know your username, API key and secret.
 
- `cexbot.py genconfig`
+ `cexbot genconfig`
 
  will generate a blank config file at `cex.cnf`. Edit the file and fill in `username`, `key` and `secret`
 
  optionally you can store the secret in an environment variable called `CEXBOT_SECRET`.
 
- ## Usage
+## Usage
 
  see
 
-  `cexbot.py -h`
+  `cexbot -h`
 
   new features being added all the time.
 
@@ -49,4 +50,4 @@ cexbot needs to know your username, API key and secret.
 
 Update frequently, new features being added all the time.
 
- `cexbot.py -u`
+ `cexbot update`
