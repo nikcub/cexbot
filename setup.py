@@ -45,7 +45,10 @@ setup(
   # scripts = scripts,
   entry_points={
     'console_scripts': [
-      "cexbot = cexbot.command_utils:run_cl"
+      "cexbot-cli = cexbot.command_utils:run_cl"
+    ],
+    'gui-scripts': [
+      "cexbot-gui = cexbot.command_utils:run_gui"
     ]
   },
 )
