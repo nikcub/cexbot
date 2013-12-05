@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import sys
 import os
 import platform
@@ -35,11 +36,16 @@ setup(
   keywords = 'cexbot, bitcoin, finance',
   url = 'https://github.com/nikcub/cexbot',
   platforms = ['linux', 'osx'],
-  version = get_file_contents('VERSION'),
+  version = cexbot.get_version(),
   author = 'Nik Cubrilovic',
   author_email = 'nikcub@gmail.com',
   license = get_file_contents('LICENSE'),
   install_requires = packages,
-  # packages = ['floyd'],
-  scripts = scripts,
+  packages = ['cexbot'],
+  # scripts = scripts,
+  entry_points={
+    'console_scripts': [
+      "cexbot = cexbot.command_utils:run_cl"
+    ]
+  },
 )
