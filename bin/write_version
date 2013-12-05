@@ -1,0 +1,3 @@
+#!/bin/bash
+PP=`which python2`
+$PP -c "import cexbot; cexbot.write_version()"
