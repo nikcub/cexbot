@@ -13,3 +13,4 @@ pip-log.txt
 cex.cnf
 cex.db
 *.pyc
+setup.cfg
