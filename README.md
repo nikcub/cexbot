@@ -36,8 +36,6 @@ cexbot needs to know your username, API key and secret.
 
  will generate a blank config file at `cex.cnf`. Edit the file and fill in `username`, `key` and `secret`
 
- optionally you can store the secret in an environment variable called `CEXBOT_SECRET`.
-
 ## Usage
 
  see
