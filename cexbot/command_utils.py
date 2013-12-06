@@ -79,7 +79,7 @@ def main(argv=[]):
 
   if args.task == 'buybalance':
     logging.info('Running buybalance')
-    balance_timer = ReqTimer(30, ac.buy_balance)
+    balance_timer = ReqTimer(5, ac.buy_balance)
     balance_timer.start()
 
   # @TODO __import__
