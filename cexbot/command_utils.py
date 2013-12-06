@@ -16,10 +16,12 @@ import cexbot.config
 from cexbot.db import DbManager
 from cexbot.cexapi import CexAPI
 from cexbot.updater import check_update
+from cexbot.timer import ReqTimer
+from cexbot.cex import CexMethods
+
 
 def main(argv=[]):
   args = get_parser()
-  print args
 
   verbose = 1
   if args.verbose:
@@ -46,20 +48,23 @@ def main(argv=[]):
 
   config = cexbot.config.get_config()
   ac = CexAPI(config.get('auth', 'username'), config.get('auth', 'apikey'), config.get('auth', 'secret'))
-  print config.sections()
-  for s in config.sections():
-    print config.options(s)
+  dbi = DbManager()
+  cx = CexMethods(ac, dbi)
 
-  # sys.exit()
+  if args.task == 'getbalance':
+    logging.info("Balance: %s" % ac.get_balance())
+    return True
 
-  # initdb()
-  # ticker_timer = ReqTimer(2, update_ticker)
-  # ticker_timer.start()
+  if args.task == 'initdb':
+    return dbi.initdb()
 
-  # balance_timer = ReqTimer(60 * 5, buy_balance)
-  # balance_timer.start()
-    # print req('ticker')
-  # print req('balance')
+  if args.task == 'updatequotes':
+    ticker_timer = ReqTimer(2, cx.update_ticker)
+    ticker_timer.start()
+
+  if args.task == 'buybalance':
+    balance_timer = ReqTimer(60 * 5, ac.buy_balance)
+    balance_timer.start()
 
 
 def get_parser():

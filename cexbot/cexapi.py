@@ -8,6 +8,7 @@ import requests.exceptions
 import hmac
 import hashlib
 import json
+import logging
 from time import time
 
 class CexAPI(object):
@@ -32,24 +33,26 @@ class CexAPI(object):
 		}
 
 	def __init__(self, username, apikey, secret):
+		if not username or not apikey or not secret:
+			logging.error("Need username, apikey and secret")
 		self.access_token['username'] = username
 		self.access_token['apikey'] = apikey
 		self.access_token['secret'] = secret
 
-	def get_params():
+	def get_params(self):
 		nonce = int(time())
 		message = str(nonce) + self.access_token['username'] + self.access_token['apikey']
 		sig = hmac.new(self.access_token['secret'], msg=message, digestmod=hashlib.sha256).hexdigest().upper()
 		return {'key': self.access_token['apikey'], 'signature': sig, 'nonce': nonce}
 
-	def get_headers():
+	def get_headers(self):
 		headers = self.headers
 		# @TODO add headers
 		return headers
 
 	def req(self, meth, extras={}):
 		if not meth in self.api_methods:
-			print "Error: No method %s" % (meth)
+			logging.error("Error: No method %s" % (meth))
 			return False
 		req_method = self.api_methods[meth]
 		req_uri = self.CEX_API_BASE + req_method[0]
@@ -61,13 +64,67 @@ class CexAPI(object):
 			else:
 				r = requests.post(req_uri, headers=self.headers)
 		except requests.exceptions.ConnectionError, e:
-			print "Error: connection"
+			logging.error("Error: connection")
 			return false
 		if r.headers['Content-Type'] != 'text/json' or not r.text:
-			print "Request error (%s)" % r.text[:200]
+			logging.error("Request error (%s)" % r.text[:200])
 			return False
 		try:
 			c = json.loads(r.text)
+			if 'error' in c:
+				logging.error("API: %s" % c['error'])
+				return False
 		except ValueError:
+			logging.error("Content loading error")
 			return False
 		return c
+
+	def get_balance(self):
+		try:
+			br = self.req('balance')
+			if br:
+				return br['BTC']['available']
+		except KeyError:
+			return False
+
+	def buy_market(self, amount):
+		pass
+
+	def place_order(self, amount, price, typ='buy'):
+		extras = {
+			'type': typ,
+			'amount': amount,
+			'price': price
+		}
+		r = self.req('place_order', extras)
+		if 'id' in r:
+			return r['id']
+		logging.error("Order error")
+		return False
+
+	def buy_balance(self, balance_threshold=0.0001):
+		balance = self.get_balance()
+		if not balance:
+			return False
+		if balance < balance_threshold:
+			return False
+		price = self.get_market_quote()
+		if not price:
+			return False
+		price = float(price)
+		balance = float(balance)
+		amount = balance / price
+		order_total = amount * price
+		if amount > 0.0001:
+			logging.info("Buy %s at %s for total balance %s (of %s)" % (amount, price, order_total, balance))
+			e = self.place_order(amount, price)
+			logging.info("Order Id: %s" % e)
+
+	def get_market_quote(self):
+		# @todo check the quantity here
+		try:
+			ask = self.req('book')['asks'][0][0]
+			return ask
+		except Exception:
+			return False
+
