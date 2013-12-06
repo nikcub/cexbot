@@ -105,14 +105,12 @@ class CexAPI(object):
   def buy_balance(self, balance_threshold=0.0001):
     balance = self.get_balance()
     if not balance:
-      logging.debug("Balance error")
       return False
     if balance < balance_threshold:
-      logging.debug("Balance %s less then threshold %s" % (balance, balance_threshold))
       return False
     price = self.get_market_quote()
     if not price:
-      logging.debug('orice error')
+      logging.error('price error')
       return False
     price = float(price)
     balance = float(balance)
