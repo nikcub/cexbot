@@ -60,12 +60,26 @@ def main(argv=[]):
   if args.task == 'initdb':
     return dbi.initdb()
 
+  if args.task == 'getmarket':
+    return ac.get_market()
+
+  if args.task == 'getprice':
+    return ac.get_market_quote()
+
+  if args.task == 'order':
+    amount = args.amount
+    price = args.price
+    r = ac.place_order(amount, price)
+    logging.info("Ordered: %s" % r)
+
   if args.task == 'updatequotes':
+    logging.info('Running updatequotes')
     ticker_timer = ReqTimer(2, cx.update_ticker)
     ticker_timer.start()
 
   if args.task == 'buybalance':
-    balance_timer = ReqTimer(60 * 5, ac.buy_balance)
+    logging.info('Running buybalance')
+    balance_timer = ReqTimer(30, ac.buy_balance)
     balance_timer.start()
 
   # @TODO __import__
@@ -78,8 +92,10 @@ def get_parser():
   # parser.add_argument('-o', dest='logfile', type=str, help='output log file')
   parser.add_argument('-v', dest='verbose', action='store_true', help='verbose output')
   parser.add_argument('-d', dest='debug', action='store_true', help='debug output')
+  parser.add_argument('-p', dest='price', action='store_true', help='price')
+  parser.add_argument('-a', dest='amount', action='store_true', help='amount')
   # parser.add_argument('-p', dest='proxy', type=str, default='tor', help='proxy to use')
-  # parser.add_argument('-t', dest='threads', type=int, default=25, help='number of threads')
+  # parser.add_argument('-t', dest='threads', type=int, default=1, help='number of threads')
   return parser.parse_args()
 
 def cl_error(msg=""):

@@ -36,6 +36,14 @@ cexbot needs to know your username, API key and secret.
 
  will generate a blank config file at `cex.cnf`. Edit the file and fill in `username`, `key` and `secret`
 
+## Example Config
+
+````
+    [auth]
+    username = user
+    apikey = key
+    secret = secret
+
 ## Usage
 
  see
