@@ -32,7 +32,7 @@ A bot for the cex.io cryptocurrency mining marketplace
 
 cexbot needs to know your username, API key and secret.
 
- `cexbot genconfig`
+ `./cexbot-cli genconfig`
 
  will generate a blank config file at `cex.cnf`. Edit the file and fill in `username`, `key` and `secret`
 
@@ -42,12 +42,17 @@ cexbot needs to know your username, API key and secret.
 
  see
 
-  `cexbot -h`
+  `./cexbot-cli -h`
 
   new features being added all the time.
+
+  see
+
+  `./cexbot-cli listtasks`
+
 
 ## Update
 
 Update frequently, new features being added all the time.
 
- `cexbot update`
+ `./cexbot-cli update`
