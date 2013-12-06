@@ -13,6 +13,8 @@ import logging
 import argparse
 
 import cexbot.config
+import cexbot.tasks
+
 from cexbot.db import DbManager
 from cexbot.cexapi import CexAPI
 from cexbot.updater import check_update
@@ -66,6 +68,9 @@ def main(argv=[]):
     balance_timer = ReqTimer(60 * 5, ac.buy_balance)
     balance_timer.start()
 
+  # @TODO __import__
+  # if args.task in cexbot.tasks:
+    # cexbot.tasks[args.task]()
 
 def get_parser():
   parser = argparse.ArgumentParser(prog='cexbot-cli', description='cexbot')
