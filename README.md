@@ -38,11 +38,12 @@ cexbot needs to know your username, API key and secret.
 
 ## Example Config
 
-````
-    [auth]
-    username = user
-    apikey = key
-    secret = secret
+```ini
+  [auth]
+  username = user
+  apikey = key
+  secret = secret
+```
 
 ## Usage
 
