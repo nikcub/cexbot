@@ -20,6 +20,9 @@ A bot for the cex.io cryptocurrency mining marketplace
 
 ## Install
 
+The easiest way to install is with `pip`, it will download the package, build it and place `cexbot-cli` in your path. If you don't have `pip` on your
+machine see ["How do I install pip on OS X"](http://stackoverflow.com/questions/17271319/installing-pip-on-mac-os-x) (*tl;dr: `sudo easy_install pip` or `brew install python`*)
+
  `pip install cexbot`
 
 ## Dev Install
