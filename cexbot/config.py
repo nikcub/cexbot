@@ -6,8 +6,10 @@
 import os
 import logging
 import ConfigParser
+import subprocess
 
 CNF_NAME = 'cex.cnf'
+CNF_SEARCHPATHS = ['.', '~', '/etc']
 CONFIG_DEFAULTS = {
 	'auth': {
 		'username': '',
@@ -55,6 +57,24 @@ def write_blank(file_path=None):
 	with open(file_path, 'wb') as config_file:
 		parser.write(config_file)
 	logging.info("Blank config file written to %s" % config_file)
+
+def get_cwd():
+  if not '__file__' in globals():
+    cwd = os.path.abspath(os.getcwd())
+  else:
+    cwd = os.path.dirname(os.path.abspath(__file__))
+  return os.path.realpath(cwd)
+
+def get_config_file():
+	cwd = get_cwd()
+	for p in CNF_SEARCHPATHS:
+		tp = os.path.join('.')
+
+def edit_config():
+	config_file = CNF_NAME
+	editor = os.environ.get('EDITOR','vim')
+	subprocess.call([editor, config_file])
+	return True
 
 def get_config():
 	parser = cnf_object()

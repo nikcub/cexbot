@@ -43,7 +43,10 @@ def main(argv=[]):
   logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s: %(message)s")
 
   if args.task == 'genconfig':
-    return config.write_blank()
+    return cexbot.config.write_blank()
+
+  if args.task == 'editconfig':
+    return cexbot.config.edit_config()
 
   if args.task == 'update':
     return check_update()
