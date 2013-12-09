@@ -47,8 +47,8 @@ setup(
     'console_scripts': [
       "cexbot-cli = cexbot.command_utils:run_cl"
     ],
-    'gui_scripts': [
-      "cexbot-gui = cexbot.command_utils:run_gui"
-    ]
+    # 'gui_scripts': [
+      # "cexbot-gui = cexbot.command_utils:run_gui"
+    # ]
   },
 )
