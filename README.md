@@ -81,4 +81,4 @@ new features being added all the time.
 
 Update frequently, new features being added all the time.
 
- `./cexbot-cli update`
+ `cexbot-cli update`
