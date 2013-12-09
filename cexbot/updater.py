@@ -21,10 +21,15 @@ def get_latest():
 def check_update():
 	cur_version = cexbot.get_version(semantic=True)
 	latest_version = get_latest()
-	print "Current version: %s Latest version: %s" % (cur_version, latest_version)
+	print "Current version: %s" % cur_version
+	print "Latest version : %s" % latest_version
 	if latest_version:
 		lv = semantic_version.Version(latest_version)
 		cv = semantic_version.Version(cur_version)
 		if lv > cv:
-			logging.error("New version available, run git pull or pip -U cexbot")
+			print "New version available, run:"
+			print " pip install -U cexbot"
+			print "to update or see the homepage for"
+			print "more information: "
+			print " http://www.github.com/nikcub/cexbot/"
 	return None
