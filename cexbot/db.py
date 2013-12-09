@@ -6,13 +6,14 @@
 import logging
 import sqlite3 as lite
 
-class DbManager(object):
-  DB_NAME = 'cex.db'
+import config
 
-  def __init__(self, dbname=None):
-    if not dbname:
-      dbname = self.DB_NAME
-    self.conn = lite.connect(dbname)
+class DbManager(object):
+
+  def __init__(self, path_db=None):
+    if not path_db:
+      path_db = config.get_db_path()
+    self.conn = lite.connect(path_db)
     self.conn.execute('pragma foreign_keys = on')
     self.conn.commit()
     self.cur = self.conn.cursor()
@@ -33,7 +34,7 @@ class DbManager(object):
     con = lite.connect(DB_NAME)
     return con
 
-  def initdb(self):
+  def init(self):
     self.cur.execute("CREATE TABLE IF NOT EXISTS quotes (time INTEGER primary key, last integer, volume integer, high integer, low integer, bid integer, ask integer)")
-    logging.info('db initialized')
+    logging.info('Database Initialized')
     return True
