@@ -10,7 +10,7 @@
 import sys
 import os
 
-VERSION = (0, 0, 13, 'alpha', 1)
+VERSION = (0, 0, 14, 'alpha', 1)
 
 __clsname__ = 'cexbot'
 __author__ = 'Nik Cubrilovic <nikcub@gmail.com>'
