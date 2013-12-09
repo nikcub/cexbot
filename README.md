@@ -25,7 +25,13 @@ machine see ["How do I install pip on OS X"](http://stackoverflow.com/questions/
 
  `pip install cexbot`
 
+If you have previously installed cexbot you will need to run an upgrade:
+
+ `pip -U install cexbot`
+
 ## Dev Install
+
+If you would like to contribute to the code:
 
  `git clone --depth=0 https://github.com/nikcub/cexbot.git`
 
@@ -35,18 +41,33 @@ machine see ["How do I install pip on OS X"](http://stackoverflow.com/questions/
 
 cexbot needs to know your username, API key and secret.
 
- `./cexbot-cli genconfig`
+Configuration options are specified with the `config` command line option.
 
- will generate a blank config file at `cex.cnf`. Edit the file and fill in `username`, `key` and `secret`
-
-## Example Config
-
-```ini
-  [auth]
-  username = user
-  apikey = key
-  secret = secret
 ```
+$ cexbot-cli config --list
+Namespace(command='config', debug=False, list=True, name=None, value=None, verbose=False, version=False)
+cex.username = nikcub
+cex.secret = secret
+cex.apikey = api
+```
+
+Set each config option with:
+
+ `cexbot-cli config cex.username nikcub`
+
+and then set your api key and secret:
+
+  `cexbot-cli config cex.apikey <your_key>`
+
+  `cexbot-cli config cex.secret <your_secret>`
+
+If you have a local editor installed, you can edit your config directly with:
+
+  `cexbot-cli config --edit`
+
+Once you have those values defined, you can test that they work with:
+
+  `cexbot-cli config --testauth`
 
 ## Usage
 
@@ -54,7 +75,7 @@ cexbot needs to know your username, API key and secret.
 
   `./cexbot-cli -h`
 
-  new features being added all the time.
+new features being added all the time.
 
   see
 

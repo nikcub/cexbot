@@ -10,27 +10,26 @@ import subprocess
 
 from cexbot.appdirs import AppDirs
 from cexbot.db import DbManager
+from cexbot.cexapi import CexAPI
 
 ad = AppDirs("cexbot", "cexbot")
+_parser = ConfigParser.SafeConfigParser(allow_no_value=True)
 
 DB_NAME = 'tradedata.db'
 CNF_NAME = 'cex.cnf'
-CNF_SEARCHPATHS = ['.', '~', '/etc']
 CONFIG_DEFAULTS = {
-	'auth': {
+	'cex': {
 		'username': 'username',
 		'apikey': 'api',
 		'secret': 'secret',
 		}
 	}
-
 CONFIG_REQUIRED = {
-	'auth': ('username', 'apikey', 'secret'),
+	'cex': ('username', 'apikey', 'secret'),
 }
 
 class BadConfig(Exception):
 	pass
-
 
 def first_run():
 	path_config = get_conf_path()
@@ -45,7 +44,6 @@ def first_run():
 		db = DbManager(path_db)
 		db.init()
 
-
 def clear_userdata():
 	path_config = get_conf_path()
 	path_db = get_db_path()
@@ -54,18 +52,11 @@ def clear_userdata():
 		if os.path.isfile(conf_file):
 			os.unlink(conf_file)
 
-
 def get_db_path():
 	return os.path.join(ad.user_data_dir, DB_NAME)
 
-
 def get_conf_path():
 	return os.path.join(ad.user_data_dir, CNF_NAME)
-
-
-def get_config_parser():
-	return ConfigParser.SafeConfigParser(allow_no_value=True)
-
 
 def defaults_write(parser):
 	for default_section in CONFIG_DEFAULTS.keys():
@@ -75,7 +66,6 @@ def defaults_write(parser):
 			if not parser.has_option(default_section, key):
 				parser.set(default_section, key, CONFIG_DEFAULTS[default_section][key])
 	return parser
-
 
 def defaults_check(parser):
 	for section in CONFIG_REQUIRED.keys():
@@ -89,15 +79,25 @@ def defaults_check(parser):
 				raise BadConfig("Require non-empty %s option in %s section of config" % (i, section))
 	return parser
 
+def test_auth():
+	ca = CexAPI(get('cex.username'), get('cex.apikey'), get('cex.secret'))
+	t = ca.req('balance')
+	if t and 'timestamp' in t:
+		print "Works!"
+	else:
+		logging.error("Check your configuration settings.")
 
 def write_blank(file_path):
 	"""Writes a blank config file at path provided by appdir"""
-	parser = get_config_parser()
-	parser = defaults_write(parser)
-	with open(file_path, 'wb') as config_file:
-		parser.write(config_file)
-	logging.info("Blank config file written to %s" % file_path)
+	global _parser
+	_parser = defaults_write(_parser)
+	write_config()
 
+def write_config():
+	path_config = get_conf_path()
+	with open(path_config, 'wb') as cf:
+		_parser.write(cf)
+	logging.info("Config file written to %s" % path_config)
 
 def edit_config():
 	"""Edit config file in path from appdir"""
@@ -107,11 +107,64 @@ def edit_config():
 	return True
 
 def get_config():
-	parser = get_config_parser()
-	parser.read(get_conf_path())
+	_parser.read(get_conf_path())
 	try:
-		defaults_check(parser)
+		defaults_check(_parser)
 	except BadConfig, e:
 		logging.error(str(e))
+	return _parser
 
-	return parser
+def list():
+	parser = get_config()
+	for section in parser.sections():
+		for (n, v) in parser.items(section):
+			cprint("%s.%s" % (section, n))
+	return True
+
+def parse_name(name):
+	try:
+		section, cname = name.split('.', 1)
+		assert section
+		assert cname
+	except Exception:
+		logging.error("Invalid config option: %s" % name)
+		return False
+	parser = get_config()
+	if not parser.has_section(section):
+		logging.error("No such config section: %s" % section)
+		return False
+	if not parser.has_option(section, cname):
+		logging.error("No such config option: %s" % name)
+		return False
+	return section, cname
+
+def cprint(name):
+	section, cname = parse_name(name)
+	cval = get(name)
+	print "%s.%s=%s" % (section, cname, cval)
+
+def get(name):
+	"""get a config option. format = section.name"""
+	section, cname = parse_name(name)
+	parser = get_config()
+	return parser.get(section, cname)
+
+def set(name, value):
+	"""set a config option. format = section.name"""
+	try:
+		section, cname = name.split('.', 1)
+		assert section
+		assert cname
+	except Exception:
+		logging.error("Invalid config option: %s" % name)
+		return False
+	parser = get_config()
+	if not parser.has_section(section):
+		logging.error("No such config section: %s" % section)
+		return False
+	if not parser.has_option(section, cname):
+		logging.error("No such config option: %s" % name)
+		return False
+	parser.set(section, cname, value)
+	write_config()
+	return True

@@ -25,18 +25,6 @@ from cexbot.cex import CexMethods
 def main(argv=[]):
   args = get_parser()
 
-  if args.task == 'genconfig':
-    return cexbot.config.write_blank()
-
-  if args.task == 'editconfig':
-    return cexbot.config.edit_config()
-
-  if args.task == 'update':
-    return check_update()
-
-  if args.task == 'cleardata':
-    return cexbot.config.clear_userdata()
-
   verbose = 1
   if args.verbose:
     verbose = 2
@@ -54,9 +42,43 @@ def main(argv=[]):
 
   logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s: %(message)s")
 
+  # make sure this is always above command parsing
   cexbot.config.first_run()
+
+  if verbose == 3:
+    print args
+
+  if args.command == 'config':
+    if args.list:
+      return cexbot.config.list()
+    elif args.edit:
+      return cexbot.config.edit_config()
+    elif args.testauth:
+      return cexbot.config.test_auth()
+    elif args.name and args.value:
+      v = cexbot.config.set(args.name, args.value)
+      return cexbot.config.cprint(args.name)
+    elif args.name:
+      return cexbot.config.cprint(args.name)
+    logging.error('Invalid config option')
+    return 1
+
+  return 1
+  if args.task == 'genconfig':
+    return cexbot.config.write_blank()
+
+  if args.task == 'editconfig':
+    return cexbot.config.edit_config()
+
+  if args.task == 'update':
+    return check_update()
+
+  if args.task == 'cleardata':
+    return cexbot.config.clear_userdata()
+
+
   config = cexbot.config.get_config()
-  ac = CexAPI(config.get('auth', 'username'), config.get('auth', 'apikey'), config.get('auth', 'secret'))
+  ac = CexAPI(config.get('cex', 'username'), config.get('cex', 'apikey'), config.get('cex', 'secret'))
   dbi = DbManager()
   cx = CexMethods(ac, dbi)
 
@@ -104,6 +126,8 @@ def get_parser():
 
   parser_config = subparsers.add_parser('config', help='config options')
   parser_config.add_argument('--list', dest='list', action='store_true', help='list configuration variables')
+  parser_config.add_argument('--edit', dest='edit', action='store_true', help='edit configuration directly')
+  parser_config.add_argument('--testauth', dest='testauth', action='store_true', help='test authentication credentials')
   parser_config.add_argument('name', type=str, help='option name', nargs='?')
   parser_config.add_argument('value', type=str, help='option value', nargs='?')
 

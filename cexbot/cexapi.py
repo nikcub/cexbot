@@ -34,7 +34,8 @@ class CexAPI(object):
 
   def __init__(self, username, apikey, secret):
     if not username or not apikey or not secret:
-      logging.error("Need username, apikey and secret")
+      logging.error("Need username, apikey and secret - please edit your config")
+      return False
     self.access_token['username'] = username
     self.access_token['apikey'] = apikey
     self.access_token['secret'] = secret
