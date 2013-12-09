@@ -63,14 +63,7 @@ def main(argv=[]):
     logging.error('Invalid config option')
     return 1
 
-  return 1
-  if args.task == 'genconfig':
-    return cexbot.config.write_blank()
-
-  if args.task == 'editconfig':
-    return cexbot.config.edit_config()
-
-  if args.task == 'update':
+  elif args.command == 'update':
     return check_update()
 
   if args.task == 'cleardata':
@@ -137,6 +130,8 @@ def get_parser():
   parser_order = subparsers.add_parser('order', help='order')
   parser_order.add_argument('-p', dest='price', action='store_true', help='price')
   parser_order.add_argument('-a', dest='amount', action='store_true', help='amount')
+
+  parser_update = subparsers.add_parser('update', help='check for updates')
 
   return parser.parse_args()
 

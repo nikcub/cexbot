@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 """
-	cexbot.tasks - all cl tasks go here.
+	cexbot.tasks - defines a task
 """
 
-def task_test():
-	print 'test task'
-	return True
+class Tasks(object):
+
+	def __init__(timer=1):
+		self.timer=timer
