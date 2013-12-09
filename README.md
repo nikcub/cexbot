@@ -45,7 +45,6 @@ Configuration options are specified with the `config` command line option.
 
 ```
 $ cexbot-cli config --list
-Namespace(command='config', debug=False, list=True, name=None, value=None, verbose=False, version=False)
 cex.username = nikcub
 cex.secret = secret
 cex.apikey = api
