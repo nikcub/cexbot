@@ -1,6 +1,0 @@
-#!/bin/bash
-
-PP=`which python2`
-# python 2.6+
-# $PP -E -m floyd.__main__ $*
-$PP -m cexbot $*
