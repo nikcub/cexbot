@@ -42,6 +42,10 @@ def main(argv=[]):
 
   logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s: %(message)s")
 
+  if args.command == 'version':
+    print cexbot.get_version()
+    return True
+
   # make sure this is always above command parsing
   cexbot.config.first_run()
 
@@ -112,8 +116,7 @@ def get_parser():
   parser = argparse.ArgumentParser(prog='cexbot-cli', description='cexbot')
 
   parser.add_argument('-v', dest='verbose', action='store_true', help='verbose output')
-  parser.add_argument('--version', dest='version', action='store_true', help='show version')
-  parser.add_argument('-d', dest='debug', action='store_true', help='debug output')
+  parser.add_argument('-d', dest='debug', action='store_true', help='debug output (Warning: lots of output, for developers)')
 
   subparsers = parser.add_subparsers(description='available subcommands', dest="command")
 
@@ -125,13 +128,16 @@ def get_parser():
   parser_config.add_argument('value', type=str, help='option value', nargs='?')
 
   parser_task = subparsers.add_parser('task', help='modify tasks')
-  parser_task.add_argument('name', type=str, help='task name')
+  # parser_config.add_argument('--list', dest='task_list', action='store_true', help='list current tasks')
+  parser_task.add_argument('name', type=str, help='task name', nargs='?')
 
   parser_order = subparsers.add_parser('order', help='order')
   parser_order.add_argument('-p', dest='price', action='store_true', help='price')
   parser_order.add_argument('-a', dest='amount', action='store_true', help='amount')
 
   parser_update = subparsers.add_parser('update', help='check for updates')
+
+  parser_version = subparsers.add_parser('version', help='show version')
 
   return parser.parse_args()
 
