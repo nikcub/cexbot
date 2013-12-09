@@ -112,5 +112,11 @@ def run_cl(argv=[]):
     raise SystemExit(-1)
 
 def run_gui(argv=[]):
-  raise Exception('Not Implemented.')
+  print "GUI coming soon."
+  return None
+  try:
+    import cexbot.gui
+    cexbot.gui.main()
+  except Exception, e:
+    print "Error: %s" % str(e)
 
