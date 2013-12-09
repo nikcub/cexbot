@@ -27,7 +27,7 @@ machine see ["How do I install pip on OS X"](http://stackoverflow.com/questions/
 
 If you have previously installed cexbot you will need to run an upgrade:
 
- `pip -U install cexbot`
+ `pip install -U cexbot`
 
 ## Dev Install
 
@@ -69,18 +69,13 @@ Once you have those values defined, you can test that they work with:
 
   `cexbot-cli config --testauth`
 
-## Usage
+## Usage and Help
 
- see
+see
 
-  `./cexbot-cli -h`
+  `cexbot-cli -h`
 
 new features being added all the time.
-
-  see
-
-  `./cexbot-cli listtasks`
-
 
 ## Update
 

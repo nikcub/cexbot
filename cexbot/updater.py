@@ -7,7 +7,7 @@ import requests
 import cexbot
 import logging
 # @TODO find a non-brainded semver implementation
-# import semantic_version
+import semantic_version
 
 UPDATE_URL = "https://raw.github.com/nikcub/cexbot/master/VERSION"
 
@@ -19,12 +19,12 @@ def get_latest():
 		return False
 
 def check_update():
-	cur_version = cexbot.get_version()
+	cur_version = cexbot.get_version(semantic=True)
 	latest_version = get_latest()
-	logging.info("Current version: %s Latest version: %s" % (cur_version, latest_version))
-	# if latest_version:
-		# lv = semantic_version.Version(latest_version)
-		# cv = semantic_version.Version(cur_version)
-		# if lv > cv:
-			# logging.error("New version available, run git pull or pip -U cexbot")
+	print "Current version: %s Latest version: %s" % (cur_version, latest_version)
+	if latest_version:
+		lv = semantic_version.Version(latest_version)
+		cv = semantic_version.Version(cur_version)
+		if lv > cv:
+			logging.error("New version available, run git pull or pip -U cexbot")
 	return None

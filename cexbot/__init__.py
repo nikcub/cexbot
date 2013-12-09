@@ -10,7 +10,7 @@
 import sys
 import os
 
-VERSION = (0, 0, 11, 'alpha', 1)
+VERSION = (0, 0, 13, 'alpha', 1)
 
 __clsname__ = 'cexbot'
 __author__ = 'Nik Cubrilovic <nikcub@gmail.com>'
@@ -20,7 +20,7 @@ __license__ = 'BSD'
 __copyright__ = 'Copyright (c) 2013, Nik Cubrilovic. All rights reserved.'
 
 
-def get_version(version=None):
+def get_version(version=None, semantic=False):
   if version is None:
     version = VERSION
   assert version[3] in ('alpha', 'beta', 'rc', 'final')
@@ -34,7 +34,10 @@ def get_version(version=None):
   elif version[3] != 'final':
     mapping = {'alpha': 'a', 'beta': 'b', 'rc': 'c'}
     sub = mapping[version[3]] + str(version[4])
-  return main + sub
+  if not semantic:
+    return main + sub
+  else:
+    return main + '-' + sub
 
 def get_status(version=None):
   if version is None:
@@ -42,7 +45,7 @@ def get_status(version=None):
   assert version[3] in ('alpha', 'beta', 'rc', 'final')
   return version[3]
 
-def write_version(file_path=None):
+def write_version(file_path=None, semantic=False):
   if not file_path:
     if not '__file__' in globals():
       cwd = os.path.abspath(os.getcwd())
@@ -52,7 +55,7 @@ def write_version(file_path=None):
   version_file = os.path.join(file_path, 'VERSION')
   print file_path
   with open(version_file, 'w') as f:
-    f.write(get_version())
+    f.write(get_version(semantic=semantic))
 
 def get_git_changeset():  # pragma: nocover
   """Returns a numeric identifier of the latest git changeset.

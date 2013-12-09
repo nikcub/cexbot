@@ -20,6 +20,7 @@ if sys.argv[-1] == 'publish':
 scripts = ['bin/cexbot']
 packages = [
   'requests',
+  'semantic_version'
 ]
 
 package_dir = os.path.realpath(os.path.dirname(__file__))
