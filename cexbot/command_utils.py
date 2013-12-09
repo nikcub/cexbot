@@ -95,15 +95,25 @@ def main(argv=[]):
 
 def get_parser():
   parser = argparse.ArgumentParser(prog='cexbot-cli', description='cexbot')
-  parser.add_argument('task')
-  # parser.add_argument('-o', dest='logfile', type=str, help='output log file')
+
   parser.add_argument('-v', dest='verbose', action='store_true', help='verbose output')
   parser.add_argument('--version', dest='version', action='store_true', help='show version')
   parser.add_argument('-d', dest='debug', action='store_true', help='debug output')
-  parser.add_argument('-p', dest='price', action='store_true', help='price')
-  parser.add_argument('-a', dest='amount', action='store_true', help='amount')
-  # parser.add_argument('-p', dest='proxy', type=str, default='tor', help='proxy to use')
-  # parser.add_argument('-t', dest='threads', type=int, default=1, help='number of threads')
+
+  subparsers = parser.add_subparsers(description='available subcommands', dest="command")
+
+  parser_config = subparsers.add_parser('config', help='config options')
+  parser_config.add_argument('--list', dest='list', action='store_true', help='list configuration variables')
+  parser_config.add_argument('name', type=str, help='option name', nargs='?')
+  parser_config.add_argument('value', type=str, help='option value', nargs='?')
+
+  parser_task = subparsers.add_parser('task', help='modify tasks')
+  parser_task.add_argument('name', type=str, help='task name')
+
+  parser_order = subparsers.add_parser('order', help='order')
+  parser_order.add_argument('-p', dest='price', action='store_true', help='price')
+  parser_order.add_argument('-a', dest='amount', action='store_true', help='amount')
+
   return parser.parse_args()
 
 def cl_error(msg=""):
