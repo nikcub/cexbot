@@ -1,0 +1,3 @@
+#!/bin/bash
+PP=`which python`
+$PP -m cexbot $*
