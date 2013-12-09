@@ -1,0 +1,3 @@
+#!/bin/bash
+PP=`which python`
+$PP -c "import cexbot.config; cexbot.config.clear_userdata()"

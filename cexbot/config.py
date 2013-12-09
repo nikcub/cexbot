@@ -8,13 +8,19 @@ import logging
 import ConfigParser
 import subprocess
 
+from cexbot.appdirs import AppDirs
+from cexbot.db import DbManager
+
+ad = AppDirs("cexbot", "cexbot")
+
+DB_NAME = 'tradedata.db'
 CNF_NAME = 'cex.cnf'
 CNF_SEARCHPATHS = ['.', '~', '/etc']
 CONFIG_DEFAULTS = {
 	'auth': {
-		'username': '',
-		'apikey': '',
-		'secret': '',
+		'username': 'username',
+		'apikey': 'api',
+		'secret': 'secret',
 		}
 	}
 
@@ -25,8 +31,41 @@ CONFIG_REQUIRED = {
 class BadConfig(Exception):
 	pass
 
-def cnf_object():
+
+def first_run():
+	path_config = get_conf_path()
+	path_db = get_db_path()
+	if not os.path.isdir(ad.user_data_dir):
+		os.mkdir(ad.user_data_dir)
+	if not os.path.isfile(path_config):
+		logging.debug("Writing config at %s" % path_config)
+		write_blank(path_config)
+	if not os.path.isfile(path_db):
+		logging.debug("Writing empty db at: %s" % path_db)
+		db = DbManager(path_db)
+		db.init()
+
+
+def clear_userdata():
+	path_config = get_conf_path()
+	path_db = get_db_path()
+	conf_files = [path_config, path_db]
+	for conf_file in conf_files:
+		if os.path.isfile(conf_file):
+			os.unlink(conf_file)
+
+
+def get_db_path():
+	return os.path.join(ad.user_data_dir, DB_NAME)
+
+
+def get_conf_path():
+	return os.path.join(ad.user_data_dir, CNF_NAME)
+
+
+def get_config_parser():
 	return ConfigParser.SafeConfigParser(allow_no_value=True)
+
 
 def defaults_write(parser):
 	for default_section in CONFIG_DEFAULTS.keys():
@@ -36,6 +75,7 @@ def defaults_write(parser):
 			if not parser.has_option(default_section, key):
 				parser.set(default_section, key, CONFIG_DEFAULTS[default_section][key])
 	return parser
+
 
 def defaults_check(parser):
 	for section in CONFIG_REQUIRED.keys():
@@ -49,36 +89,26 @@ def defaults_check(parser):
 				raise BadConfig("Require non-empty %s option in %s section of config" % (i, section))
 	return parser
 
-def write_blank(file_path=None):
-	parser = cnf_object()
-	parser = defaults_check(parser)
-	if not file_path:
-		file_path = CNF_NAME
+
+def write_blank(file_path):
+	"""Writes a blank config file at path provided by appdir"""
+	parser = get_config_parser()
+	parser = defaults_write(parser)
 	with open(file_path, 'wb') as config_file:
 		parser.write(config_file)
-	logging.info("Blank config file written to %s" % config_file)
+	logging.info("Blank config file written to %s" % file_path)
 
-def get_cwd():
-  if not '__file__' in globals():
-    cwd = os.path.abspath(os.getcwd())
-  else:
-    cwd = os.path.dirname(os.path.abspath(__file__))
-  return os.path.realpath(cwd)
-
-def get_config_file():
-	cwd = get_cwd()
-	for p in CNF_SEARCHPATHS:
-		tp = os.path.join('.')
 
 def edit_config():
-	config_file = CNF_NAME
+	"""Edit config file in path from appdir"""
+	path_config = get_conf_path()
 	editor = os.environ.get('EDITOR','vim')
-	subprocess.call([editor, config_file])
+	subprocess.call([editor, path_config])
 	return True
 
 def get_config():
-	parser = cnf_object()
-	parser.read([CNF_NAME, os.path.expanduser('~/.' + CNF_NAME), os.path.realpath('/etc/' + CNF_NAME)])
+	parser = get_config_parser()
+	parser.read(get_conf_path())
 	try:
 		defaults_check(parser)
 	except BadConfig, e:

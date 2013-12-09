@@ -25,6 +25,18 @@ from cexbot.cex import CexMethods
 def main(argv=[]):
   args = get_parser()
 
+  if args.task == 'genconfig':
+    return cexbot.config.write_blank()
+
+  if args.task == 'editconfig':
+    return cexbot.config.edit_config()
+
+  if args.task == 'update':
+    return check_update()
+
+  if args.task == 'cleardata':
+    return cexbot.config.clear_userdata()
+
   verbose = 1
   if args.verbose:
     verbose = 2
@@ -42,15 +54,7 @@ def main(argv=[]):
 
   logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s: %(message)s")
 
-  if args.task == 'genconfig':
-    return cexbot.config.write_blank()
-
-  if args.task == 'editconfig':
-    return cexbot.config.edit_config()
-
-  if args.task == 'update':
-    return check_update()
-
+  cexbot.config.first_run()
   config = cexbot.config.get_config()
   ac = CexAPI(config.get('auth', 'username'), config.get('auth', 'apikey'), config.get('auth', 'secret'))
   dbi = DbManager()
@@ -94,6 +98,7 @@ def get_parser():
   parser.add_argument('task')
   # parser.add_argument('-o', dest='logfile', type=str, help='output log file')
   parser.add_argument('-v', dest='verbose', action='store_true', help='verbose output')
+  parser.add_argument('--version', dest='version', action='store_true', help='show version')
   parser.add_argument('-d', dest='debug', action='store_true', help='debug output')
   parser.add_argument('-p', dest='price', action='store_true', help='price')
   parser.add_argument('-a', dest='amount', action='store_true', help='amount')
