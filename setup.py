@@ -23,6 +23,10 @@ packages = [
   'semantic_version'
 ]
 
+APP = ['cexbot/main.py']
+DATA_FILES = ['cexbot-cli']
+OPTIONS = {'argv_emulation': True}
+
 package_dir = os.path.realpath(os.path.dirname(__file__))
 
 def get_file_contents(file_path):
@@ -43,6 +47,10 @@ setup(
   license = get_file_contents('LICENSE'),
   install_requires = packages,
   packages = ['cexbot'],
+  app=APP,
+  data_files=DATA_FILES,
+  options={'py2app': OPTIONS},
+  setup_requires=['py2app'],
   # scripts = scripts,
   entry_points={
     'console_scripts': [

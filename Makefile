@@ -13,4 +13,5 @@ publish:
 
 clean:
 	find . -name *.pyc -exec rm -f {} \;
-
+	rm -rf build/*
+	rm -rf dist/*
