@@ -70,7 +70,8 @@ def main(argv=[]):
   elif args.command == 'update':
     return check_update()
 
-  if args.task == 'cleardata':
+  # not implemented
+  elif args.command == 'cleardata':
     return cexbot.config.clear_userdata()
 
 
@@ -79,31 +80,31 @@ def main(argv=[]):
   dbi = DbManager()
   cx = CexMethods(ac, dbi)
 
-  if args.task == 'getbalance':
-    logging.info("Balance: %s" % ac.get_balance())
+  if args.command == 'balance':
+    print "Balance: %s BTC" % ac.get_balance()
     return True
 
-  if args.task == 'initdb':
+  elif args.command == 'initdb':
     return dbi.initdb()
 
-  if args.task == 'getmarket':
+  elif args.command == 'getmarket':
     return ac.get_market()
 
-  if args.task == 'getprice':
+  elif args.command == 'getprice':
     return ac.get_market_quote()
 
-  if args.task == 'order':
+  elif args.command == 'order':
     amount = args.amount
     price = args.price
     r = ac.place_order(amount, price)
     logging.info("Ordered: %s" % r)
 
-  if args.task == 'updatequotes':
+  elif args.command == 'updatequotes':
     logging.info('Running updatequotes')
     ticker_timer = ReqTimer(2, cx.update_ticker)
     ticker_timer.start()
 
-  if args.task == 'buybalance':
+  elif args.command == 'buybalance':
     logging.info('Running buybalance')
     balance_timer = ReqTimer(5, ac.buy_balance)
     balance_timer.start()
@@ -127,17 +128,22 @@ def get_parser():
   parser_config.add_argument('name', type=str, help='option name', nargs='?')
   parser_config.add_argument('value', type=str, help='option value', nargs='?')
 
+  parser_update = subparsers.add_parser('update', help='check for updates')
+
+  parser_version = subparsers.add_parser('version', help='show version')
+
+  parser_balance = subparsers.add_parser('balance', help='show balance')
+
   parser_task = subparsers.add_parser('task', help='modify tasks')
   # parser_config.add_argument('--list', dest='task_list', action='store_true', help='list current tasks')
   parser_task.add_argument('name', type=str, help='task name', nargs='?')
 
   parser_order = subparsers.add_parser('order', help='order')
-  parser_order.add_argument('-p', dest='price', action='store_true', help='price')
-  parser_order.add_argument('-a', dest='amount', action='store_true', help='amount')
+  parser_order.add_argument('pair', type=str, default="GHS/BTC", nargs='?', help="pair (default: GHS/BTC)")
+  parser_order.add_argument('type', type=str, help='buy or sell (default: buy)', default="buy")
+  parser_order.add_argument('price', type=str, default='market', help='price (default: market)', nargs='?')
+  parser_order.add_argument('amount', type=str, help='amount')
 
-  parser_update = subparsers.add_parser('update', help='check for updates')
-
-  parser_version = subparsers.add_parser('version', help='show version')
 
   return parser.parse_args()
 

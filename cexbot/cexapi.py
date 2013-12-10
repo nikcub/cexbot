@@ -84,7 +84,7 @@ class CexAPI(object):
     try:
       br = self.req('balance')
       if br:
-        return br['BTC']['available']
+        return br
     except KeyError:
       return False
 
