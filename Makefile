@@ -1,5 +1,7 @@
+PREFIX=/usr/local
 APP=cexbot
 DATE=$(shell date +%I:%M%p)
+PYTHON=$(shell which python)
 
 publish:
 	./bin/write_version
@@ -12,6 +14,7 @@ publish:
 	python setup.py publish
 
 clean:
+	$(PYTHON) setup.py clean --all
 	find . -name *.pyc -exec rm -f {} \;
 	rm -rf build/*
 	rm -rf dist/*
