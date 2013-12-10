@@ -11,16 +11,19 @@ except ImportError:
   from distutils.core import setup
 
 if getattr(sys, 'version_info', (0, 0, 0)) < (2, 5, 0, 'final'):
-    raise SystemExit("floyd requires Python 2.5 or later.")
+    raise SystemExit("cexbot requires Python 2.5 or later.")
 
 if sys.argv[-1] == 'publish':
   os.system('python setup.py sdist upload')
   sys.exit()
 
-scripts = ['bin/cexbot']
+scripts = ['cexbot-cli']
+if os.name == 'nt':
+  scripts.append('bin/cexbot-cli.bat')
+
 packages = [
   'requests',
-  'semantic_version'
+  'semantic_version',
 ]
 
 APP = ['cexbot/main.py']
@@ -51,13 +54,13 @@ setup(
   data_files=DATA_FILES,
   options={'py2app': OPTIONS},
   setup_requires=['py2app'],
-  # scripts = scripts,
-  entry_points={
-    'console_scripts': [
-      "cexbot-cli = cexbot.command_utils:run_cl"
-    ],
+  scripts = scripts,
+  # entry_points={
+  #   'console_scripts': [
+  #     "cexbot-cli = cexbot.command_utils:run_cl"
+  #   ],
     # 'gui_scripts': [
       # "cexbot-gui = cexbot.command_utils:run_gui"
     # ]
-  },
+  # },
 )
