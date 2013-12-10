@@ -159,7 +159,7 @@ def run_cl(argv=[]):
 
 def run_gui(argv=[]):
   print "GUI coming soon."
-  return None
+  # return None
   try:
     import cexbot.gui
     cexbot.gui.main()
