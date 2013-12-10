@@ -124,9 +124,9 @@ def list():
 def parse_name(name):
 	try:
 		section, cname = name.split('.', 1)
-		assert section
-		assert cname
-	except Exception:
+		if not section or not cname:
+			raise IndexError
+	except (IndexError, ValueError):
 		logging.error("Invalid config option: %s" % name)
 		return False
 	parser = get_config()
@@ -151,20 +151,8 @@ def get(name):
 
 def set(name, value):
 	"""set a config option. format = section.name"""
-	try:
-		section, cname = name.split('.', 1)
-		assert section
-		assert cname
-	except Exception:
-		logging.error("Invalid config option: %s" % name)
-		return False
+	section, cname = parse_name(name)
 	parser = get_config()
-	if not parser.has_section(section):
-		logging.error("No such config section: %s" % section)
-		return False
-	if not parser.has_option(section, cname):
-		logging.error("No such config option: %s" % name)
-		return False
 	parser.set(section, cname, value)
 	write_config()
 	return True
