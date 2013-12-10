@@ -3,16 +3,10 @@
 	cexbot.config - config abstraction
 """
 
-import os
-import logging
-import ConfigParser
-import subprocess
+import os, logging, ConfigParser, subprocess
+import appdirs, db, cexapi
 
-from cexbot.appdirs import AppDirs
-from cexbot.db import DbManager
-from cexbot.cexapi import CexAPI
-
-ad = AppDirs("cexbot", "cexbot")
+ad = appdirs.AppDirs("cexbot", "cexbot")
 _parser = ConfigParser.SafeConfigParser(allow_no_value=True)
 
 DB_NAME = 'tradedata.db'
@@ -22,7 +16,12 @@ CONFIG_DEFAULTS = {
 		'username': 'username',
 		'apikey': 'api',
 		'secret': 'secret',
-		}
+		},
+	'proxy': {
+		'type': '',
+		'host': '127.0.0.1',
+		'port': 8080
+		},
 	}
 CONFIG_REQUIRED = {
 	'cex': ('username', 'apikey', 'secret'),
@@ -41,7 +40,7 @@ def first_run():
 		write_blank(path_config)
 	if not os.path.isfile(path_db):
 		logging.debug("Writing empty db at: %s" % path_db)
-		db = DbManager(path_db)
+		db = db.DbManager(path_db)
 		db.init()
 
 def clear_userdata():
@@ -80,7 +79,7 @@ def defaults_check(parser):
 	return parser
 
 def test_auth():
-	ca = CexAPI(get('cex.username'), get('cex.apikey'), get('cex.secret'))
+	ca = cexapi.CexAPI(get('cex.username'), get('cex.apikey'), get('cex.secret'))
 	t = ca.req('balance')
 	if t and 'timestamp' in t:
 		print "Works!"
@@ -128,14 +127,14 @@ def parse_name(name):
 			raise IndexError
 	except (IndexError, ValueError):
 		logging.error("Invalid config option: %s" % name)
-		return False
+		return None, None
 	parser = get_config()
 	if not parser.has_section(section):
 		logging.error("No such config section: %s" % section)
-		return False
+		return None, None
 	if not parser.has_option(section, cname):
 		logging.error("No such config option: %s" % name)
-		return False
+		return None, None
 	return section, cname
 
 def cprint(name):
@@ -146,12 +145,16 @@ def cprint(name):
 def get(name):
 	"""get a config option. format = section.name"""
 	section, cname = parse_name(name)
+	if not section or not cname:
+		return False
 	parser = get_config()
 	return parser.get(section, cname)
 
 def set(name, value):
 	"""set a config option. format = section.name"""
 	section, cname = parse_name(name)
+	if not section or not cname:
+		return False
 	parser = get_config()
 	parser.set(section, cname, value)
 	write_config()
